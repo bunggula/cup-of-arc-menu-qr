@@ -7,37 +7,42 @@ use App\Models\MenuItem;
 class CategoryController extends Controller
 {
     // Ito yung 'index' method na hinahanap ng error
-   public function index()
+    public function index()
     {
-        // 1. Kunin lahat ng categories sa database
-        $categories = Category::latest()->get();
-
-        // 2. Ipasa ang variable sa view gamit ang compact()
+        // Kukunin natin lahat at i-group base sa parent_type (Coffee Based vs Non-Coffee)
+        $categories = Category::latest()->get()->groupBy('parent_type');
+    
         return view('admin.categories', compact('categories'));
     }
     public function store(Request $request) {
-        $request->validate(['name' => 'required']);
+        $request->validate([
+            'name' => 'required',
+            'parent_type' => 'required' // Siguraduhing may pinili si user
+        ]);
     
-        \App\Models\Category::create([
+        Category::create([
             'name' => $request->name,
-            'slug' => \Illuminate\Support\Str::slug($request->name)
+            'slug' => \Illuminate\Support\Str::slug($request->name),
+            'parent_type' => $request->parent_type // Isama ito sa pag-save
         ]);
     
         return back()->with('success', 'Category added!');
     }
     public function update(Request $request, Category $category)
-{
-    $request->validate([
-        'name' => 'required|unique:categories,name,' . $category->id
-    ]);
-
-    $category->update([
-        'name' => $request->name,
-        'slug' => \Illuminate\Support\Str::slug($request->name)
-    ]);
-
-    return back()->with('success', 'Category updated!');
-}
+    {
+        $request->validate([
+            'name' => 'required|unique:categories,name,' . $category->id,
+            'parent_type' => 'required'
+        ]);
+    
+        $category->update([
+            'name' => $request->name,
+            'slug' => \Illuminate\Support\Str::slug($request->name),
+            'parent_type' => $request->parent_type
+        ]);
+    
+        return back()->with('success', 'Category updated!');
+    }
 public function destroy(Category $category)
 {
     $category->delete();

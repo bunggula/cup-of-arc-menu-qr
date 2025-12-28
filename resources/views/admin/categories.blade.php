@@ -8,23 +8,32 @@
     openEdit: false, 
     openDelete: false, 
     catId: null, 
-    catName: '' 
+    catName: '',
+    catParent: ''
 }">
 
     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
         <h3 class="text-lg font-bold mb-4 text-gray-800">Add New Category</h3>
-        <form action="/admin/categories" method="POST" class="flex gap-4">
+        <form action="/admin/categories" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @csrf
-            <div class="flex-1">
-                <input type="text" name="name" placeholder="Ex. Cold Brew, Espresso, Pastries" required
-                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
-                @error('name')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Mother Category</label>
+                <select name="parent_type" required class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition appearance-none bg-white">
+                    <option value="Coffee Based">☕ Coffee Based</option>
+                    <option value="Non-Coffee">🍵 Non-Coffee</option>
+                    <option value="Food & Pastries">🥐 Food & Pastries</option>
+                </select>
             </div>
-            <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-700 transition h-fit shadow-sm">
-                Save Category
-            </button>
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Category Name</label>
+                <input type="text" name="name" placeholder="Ex. Cold Brew" required
+                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-orange-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-700 transition shadow-sm h-[42px]">
+                    Save Category
+                </button>
+            </div>
         </form>
     </div>
 
@@ -37,23 +46,31 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                @forelse($categories as $category)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 font-medium text-gray-900">{{ $category->name }}</td>
-                        <td class="px-6 py-4 text-right flex justify-end items-center space-x-4">
-                            <a href="/admin/categories/{{ $category->id }}/items" class="text-blue-600 hover:text-blue-800 text-sm font-bold">Manage Items</a>
-                            
-                            <button @click="openEdit = true; catId = {{ $category->id }}; catName = '{{ $category->name }}'" 
-                                class="text-gray-500 hover:text-orange-600 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            </button>
-
-                            <button @click="openDelete = true; catId = {{ $category->id }}; catName = '{{ $category->name }}'" 
-                                class="text-gray-400 hover:text-red-600 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
+                @forelse($categories as $parentType => $group)
+                    <tr class="bg-stone-50">
+                        <td colspan="2" class="px-6 py-2 text-[10px] font-black text-orange-600 uppercase tracking-[0.2em] border-y border-stone-100">
+                            {{ $parentType }}
                         </td>
                     </tr>
+                    
+                    @foreach($group as $category)
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 font-medium text-gray-900">{{ $category->name }}</td>
+                            <td class="px-6 py-4 text-right flex justify-end items-center space-x-4">
+                                <a href="/admin/categories/{{ $category->id }}/items" class="text-blue-600 hover:text-blue-800 text-sm font-bold">Manage Items</a>
+                                
+                                <button @click="openEdit = true; catId = {{ $category->id }}; catName = '{{ $category->name }}'; catParent = '{{ $category->parent_type }}'" 
+                                    class="text-gray-500 hover:text-orange-600 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </button>
+
+                                <button @click="openDelete = true; catId = {{ $category->id }}; catName = '{{ $category->name }}'" 
+                                    class="text-gray-400 hover:text-red-600 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
                 @empty
                     <tr>
                         <td colspan="2" class="px-6 py-10 text-center text-gray-400 italic">No categories found.</td>
@@ -71,9 +88,22 @@
                 <form :action="'/admin/categories/' + catId" method="POST">
                     @csrf
                     @method('PUT')
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
-                    <input type="text" name="name" x-model="catName" required
-                        class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none mb-6">
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mother Category</label>
+                        <select name="parent_type" x-model="catParent" class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-orange-500">
+                            <option value="Coffee Based">Coffee Based</option>
+                            <option value="Non-Coffee">Non-Coffee</option>
+                            <option value="Food & Pastries">Food & Pastries</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
+                        <input type="text" name="name" x-model="catName" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                    </div>
+
                     <div class="flex justify-end space-x-3">
                         <button type="button" @click="openEdit = false" class="px-4 py-2 text-gray-600 font-medium">Cancel</button>
                         <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-700">Update</button>
@@ -103,6 +133,5 @@
             </div>
         </div>
     </div>
-
 </div>
 @endsection

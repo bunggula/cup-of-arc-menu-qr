@@ -9,7 +9,7 @@
         <div class="md:flex">
             <div class="md:w-1/2 bg-slate-50 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-200">
                 <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-100 mb-4" id="printableQR">
-                    {!! QrCode::size(250)->backgroundColor(255, 255, 255)->color(234, 88, 12)->margin(2)->generate('https://ebony-unpropagable-amal.ngrok-free.dev/menu') !!}
+                    {!! QrCode::size(250)->backgroundColor(255, 255, 255)->color(234, 88, 12)->margin(2)->generate('https://cafe-online-menu.free.nf/menu') !!}
                 </div>
                 <p class="text-xs text-gray-400 font-mono">Scan to view digital menu</p>
             </div>
@@ -24,7 +24,7 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Target URL (Public)</label>
                         <div class="flex items-center px-4 py-3 bg-orange-50 rounded-xl border border-orange-100 text-orange-700 text-xs font-mono break-all">
-                            https://ebony-unpropagable-amal.ngrok-free.dev/menu
+                        https://cafe-online-menu.free.nf//menu
                         </div>
                     </div>
 

@@ -10,7 +10,7 @@ class Category extends Model
     use HasFactory;
 
     // Pinapayagan natin si Laravel na i-save itong mga columns na ito
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug','parent_type'];
 
     /**
      * Relationship: Isang Category, maraming Items
